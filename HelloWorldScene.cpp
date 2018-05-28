@@ -94,13 +94,6 @@ void HelloWorld::update(float delta)
             Places.push_back(i);
     }
     Delete<Shooting>(Patr, Places);
-    /*size_t i = 0;
-    for (size_t j = 0; j < Places.size(); ++j, ++i)
-    {
-        this->removeChild(Patr[Places[j] - i]->Sprite());
-        Patr.erase(Patr.begin() + Places[j] - i);
-    }
-    Places.clear();*/
     for (size_t i = 0; i < EnemyPatr.size(); ++i)
     {
         if (GameObject::Collision(Pack->Sprite(), EnemyPatr[i]->Sprite()))
@@ -125,13 +118,6 @@ void HelloWorld::update(float delta)
             }
     }
     Delete<Shooting>(EnemyPatr, Places);
-    /*i = 0;
-    for (size_t j = 0; j < Places.size(); ++j, ++i)
-    {
-        this->removeChild(EnemyPatr[Places[j] - i]->Sprite());
-        EnemyPatr.erase(EnemyPatr.begin() + Places[j] - i);
-    }
-    Places.clear();*/
     for (size_t j = 0; j < En.size(); ++j)
     {
         int size = Patr.size();
@@ -170,13 +156,6 @@ void HelloWorld::update(float delta)
         En[j]->ChangeMove(pos);
     }
     Delete<EnemyGeneral>(En, Places);
-    /*i = 0;
-    for (size_t j = 0; j < Places.size(); ++j, ++i)
-    {
-        this->removeChild(En[Places[j] - i]->Sprite());
-        En.erase(En.begin() + Places[j] - i);
-    }
-    Places.clear();*/
     ChangeScore();
 }
 
