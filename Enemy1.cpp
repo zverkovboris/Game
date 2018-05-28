@@ -75,25 +75,6 @@ void EnemyGeneral::Update(float delta)
                 }
             }
         }
-       /* else if (std::abs(pos.x - Goal.x) > Speed * delta)
-        {
-                if (CheckLeft(this) && Move.x <= 0)
-                {
-                    Update(cocos2d::Vec2(-Speed*delta, 0));
-                    if (!CheckLeft(this))
-                        Update(cocos2d::Vec2(Speed*delta, 0));
-                    else
-                        return;
-                }
-                else if (CheckRight(this) && Move.x >= 0)
-                {
-                    Update(cocos2d::Vec2(Speed*delta, 0));
-                    if (!CheckRight(this))
-                        Update(cocos2d::Vec2(-Speed*delta, 0));
-                    else
-                        return;
-                }
-        }*/
     }
     else if (pos.y - Goal.y < -1 * Speed*delta && Move.y >= 0)
     {
@@ -150,33 +131,6 @@ void EnemyGeneral::Update(float delta)
                 }
             }
         }
-        /*else if (std::abs(pos.x - Goal.x) > Speed * delta)
-        {
-                if (CheckLeft(this) && Move.x <= 0)
-                {
-                    Update(cocos2d::Vec2(-Speed*delta, 0));
-                    if (!CheckLeft(this))
-                        Update(cocos2d::Vec2(Speed*delta, 0));
-                    else
-                        return;
-                }
-                else if (CheckRight(this) && Move.x >= 0)
-                {
-                    Update(cocos2d::Vec2(Speed*delta, 0));
-                    if (!CheckRight(this))
-                        Update(cocos2d::Vec2(-Speed*delta, 0));
-                    else
-                        return;
-                }
-            /*else if (pos.x - Goal.x < -Speed * delta)
-            {
-                if (CheckRight(this) && Move.x >= 0)
-                    Update(cocos2d::Vec2(-Speed*delta, 0));
-                else if (CheckLeft(this) && Move.x <= 0)
-                    Update(cocos2d::Vec2(Speed*delta, 0));
-                return;
-            }
-        }*/
     }
     
     if (pos.x - Goal.x > Speed * delta && Move.x <= 0)
@@ -233,33 +187,6 @@ void EnemyGeneral::Update(float delta)
                 }
             }
         }
-        /*else if (std::abs(pos.y - Goal.y) > Speed * delta)
-        {
-            if (CheckDown(this) && Move.y <= 0)
-            {
-                Update(cocos2d::Vec2(0, -Speed*delta));
-                if (!CheckDown(this))
-                    Update(cocos2d::Vec2(0, Speed*delta));
-                else
-                    return;
-            }
-            else if (CheckUp(this) && Move.y >= 0)
-            {
-                Update(cocos2d::Vec2(0, Speed*delta));
-                if (!CheckUp(this))
-                    Update(cocos2d::Vec2(0, -Speed*delta));
-                else
-                    return;
-            }
-            /*else if (pos.y - Goal.y < -Speed * delta)
-            {
-                if (CheckUp(this) && Move.y >= 0)
-                    Update(cocos2d::Vec2(0, -Speed*delta));
-                else if (CheckDown(this) && Move.y <= 0)
-                    Update(cocos2d::Vec2(0, Speed*delta));
-                return;
-            }
-        }*/
     }
     else if (pos.x - Goal.x < -Speed*delta && Move.x >= 0)
     {
@@ -315,25 +242,6 @@ void EnemyGeneral::Update(float delta)
                  }
              }
          }
-         /*else if (std::abs(pos.y - Goal.y) > Speed * delta)
-         {
-             if (CheckDown(this) && Move.y <= 0)
-             {
-                 Update(cocos2d::Vec2(0, -Speed*delta));
-                 if (!CheckDown(this))
-                     Update(cocos2d::Vec2(0, Speed*delta));
-                 else
-                     return;
-             }
-             else if (CheckUp(this) && Move.y >= 0)
-             {
-                 Update(cocos2d::Vec2(0, Speed*delta));
-                 if (!CheckUp(this))
-                     Update(cocos2d::Vec2(0, -Speed*delta));
-                 else
-                     return;
-             }
-         }*/
     }
     if (std::abs(Goal.y - pos.y) < Speed * delta)
     {
