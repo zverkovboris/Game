@@ -1,27 +1,24 @@
 #include "Enemy1.h"
 
-EnemyGeneral::EnemyGeneral(const std::string& filenamePicture, const std::vector<std::shared_ptr<Labirint>>& lab, cocos2d::Vec2 pos)
+EnemyGeneral::EnemyGeneral(const std::string& filenamePicture, const std::vector<std::shared_ptr<Labirint>>& lab, cocos2d::Vec2 pos, cocos2d::Vec2 base)
     : GameObject(filenamePicture, lab)
     , Goal(pos)
     , Speed(150)
     , Move(cocos2d::Vec2(0, 0))
     , Get(false)
     , Time(0)
+    , Base(base)
 {
+    Timer = rand() % 3 + 1;
     Lifes = rand() % 3 + 1;
     Sprite()->setColor(cocos2d::Color3B::RED);
     cocos2d::Vec2 size = Sprite()->getContentSize();
     Sprite()->setScale(45 / size.x);
-    Base = cocos2d::Vec2(955, 10);
     Sprite()->setPosition(Base);
 }
-
-void EnemyGeneral::Update(float delta)
+bool EnemyGeneral::Update(Dir a, float delta)
 {
-    Time += delta;
-    Get = false;
-    cocos2d::Vec2 pos = Sprite()->getPosition();
-    if (pos.y - Goal.y > Speed*delta && Move.y <= 0)
+    if (a == Dir::Down)
     {
         if (CheckDown(this))
         {
@@ -29,54 +26,23 @@ void EnemyGeneral::Update(float delta)
             if (!CheckDown(this))
                 Update(cocos2d::Vec2(0, Speed*delta));
             else
-            return;
+                return true;
         }
-        if (Move.x != Move.y)
-        {
-            if (Move.x > 0 || Goal.x >= Base.x)
-            {
-                if (CheckRight(this) && Move.x >= 0)
-                {
-                    Update(cocos2d::Vec2(Speed*delta, 0));
-                    if (!CheckRight(this))
-                        Update(cocos2d::Vec2(-Speed*delta, 0));
-                    else
-                    return;
-                }
-            }
-            if (Move.x < 0 || Base.x >= Goal.x)
-            {
-                if (CheckLeft(this) && Move.x <= 0)
-                {
-                    Update(cocos2d::Vec2(-Speed*delta, 0));
-                    if (!CheckLeft(this))
-                        Update(cocos2d::Vec2(Speed*delta, 0));
-                    else
-                    return;
-                }
-            }
-            if (Move.x == 0)
-            {
-                if (CheckRight(this))
-                {
-                    Update(cocos2d::Vec2(Speed*delta, 0));
-                    if (!CheckRight(this))
-                        Update(cocos2d::Vec2(-Speed*delta, 0));
-                    else
-                        return;
-                }
-                if (CheckLeft(this))
-                {
-                    Update(cocos2d::Vec2(-Speed*delta, 0));
-                    if (!CheckLeft(this))
-                        Update(cocos2d::Vec2(Speed*delta, 0));
-                    else
-                        return;
-                }
-            }
-        }
+        return false;
     }
-    else if (pos.y - Goal.y < -1 * Speed*delta && Move.y >= 0)
+    if (a == Dir::Left)
+    {
+        if (CheckLeft(this) && Move.x <= 0)
+        {
+            Update(cocos2d::Vec2(-Speed*delta, 0));
+            if (!CheckLeft(this))
+                Update(cocos2d::Vec2(Speed*delta, 0));
+            else
+                return true;
+        }
+        return false;
+    }
+    if (a == Dir::Up)
     {
         if (CheckUp(this))
         {
@@ -84,164 +50,89 @@ void EnemyGeneral::Update(float delta)
             if (!CheckUp(this))
                 Update(cocos2d::Vec2(0, -Speed*delta));
             else
-            return;
+                return true;
         }
-        if (Move.x != Move.y)
+        return false;
+    }
+    if (a == Dir::Right)
+    {
+        if (CheckRight(this))
         {
-            if (Move.x > 0 || Goal.x >= Base.x)
-            {
-                if (CheckRight(this) && Move.x >= 0)
-                {
-                    Update(cocos2d::Vec2(Speed*delta, 0));
-                    if (!CheckRight(this))
-                        Update(cocos2d::Vec2(-Speed*delta, 0));
-                    else
-                        return;
-                }
-            }
-            if (Move.x < 0 || Base.x >= Goal.x)
-            {
-                
-                if (CheckLeft(this) && Move.x <= 0)
-                {
-                    Update(cocos2d::Vec2(-Speed*delta, 0));
-                    if (!CheckLeft(this))
-                        Update(cocos2d::Vec2(Speed*delta, 0));
-                    else
-                    return;
-                }
-            }
-            if (Move.x == 0)
-            {
-                if (CheckRight(this))
-                {
-                    Update(cocos2d::Vec2(Speed*delta, 0));
-                    if (!CheckRight(this))
-                        Update(cocos2d::Vec2(-Speed*delta, 0));
-                    else
-                        return;
-                }
-                if (CheckLeft(this))
-                {
-                    Update(cocos2d::Vec2(-Speed*delta, 0));
-                    if (!CheckLeft(this))
-                        Update(cocos2d::Vec2(Speed*delta, 0));
-                    else
-                        return;
-                }
-            }
+            Update(cocos2d::Vec2(Speed*delta, 0));
+            if (!CheckRight(this))
+                Update(cocos2d::Vec2(-Speed*delta, 0));
+            else
+                return true;
+        }
+        return false;
+    }
+}
+bool EnemyGeneral::Update(Dir fir, Dir sec, bool XorY, float delta)
+{
+    float g = Goal.x;
+    float b = Base.x;
+    float m = Move.x;
+    if (XorY)
+    {
+        g = Goal.y;
+        b = Base.y;
+        m = Move.y;
+    }
+    if (Move.x != Move.y)
+    {
+        if (m > 0 || g >= b)
+        {
+            if (m >= 0)
+                if (Update(fir, delta))
+                    return true;
+        }
+        if (m < 0 || b >= g)
+        {
+            if (m <= 0)
+                if (Update(sec, delta))
+                    return true;
+        }
+        if (m == 0)
+        {
+            if (Update(fir, delta))
+                return true;
+            if (Update(sec, delta))
+                return true;
         }
     }
-    
+    return false;
+}
+void EnemyGeneral::Update(float delta)
+{
+    Time += delta;
+    cocos2d::Vec2 pos = Sprite()->getPosition();
+    if (pos.y - Goal.y > Speed*delta && Move.y <= 0)
+    {
+        if (Update(Dir::Down, delta))
+            return;
+        if (Update(Dir::Right, Dir::Left, false, delta))
+            return;
+    }
+    else if (pos.y - Goal.y < -1 * Speed*delta && Move.y >= 0)
+    {
+        if (Update(Dir::Up, delta))
+            return;
+        if (Update(Dir::Right, Dir::Left, false, delta))
+            return;
+    }
     if (pos.x - Goal.x > Speed * delta && Move.x <= 0)
     {
-        if (CheckLeft(this))
-        {
-            Update(cocos2d::Vec2(-Speed * delta, 0));
-            if (!CheckLeft(this))
-                Update(cocos2d::Vec2(Speed*delta, 0));
-            else
-                return;
-        }
-        if (Move.x != Move.y)
-        {
-            if (Move.y > 0 || Goal.y >= Base.y)
-            {
-                if (CheckUp(this) && Move.y >= 0)
-                {
-                    Update(cocos2d::Vec2(0, Speed*delta));
-                    if (!CheckUp(this))
-                        Update(cocos2d::Vec2(0, -Speed*delta));
-                    else
-                    return;
-                }
-            }
-            if (Move.y < 0 || Base.y >= Goal.y)
-            {
-                if (CheckDown(this) && Move.y <= 0)
-                {
-                    Update(cocos2d::Vec2(0, -Speed*delta));
-                    if (!CheckDown(this))
-                        Update(cocos2d::Vec2(0, Speed*delta));
-                    else
-                    return;
-                }
-            }
-            if (Move.y == 0)
-            {
-                if (CheckUp(this))
-                {
-                    Update(cocos2d::Vec2(0, Speed*delta));
-                    if (!CheckUp(this))
-                        Update(cocos2d::Vec2(0, -Speed*delta));
-                    else
-                        return;
-                }
-                if (CheckDown(this))
-                {
-                    Update(cocos2d::Vec2(0, -Speed*delta));
-                    if (!CheckDown(this))
-                        Update(cocos2d::Vec2(0, Speed*delta));
-                    else
-                        return;
-                }
-            }
-        }
+        if (Update(Dir::Left, delta))
+            return;
+        if (Update(Dir::Up, Dir::Down, true, delta))
+            return;
     }
     else if (pos.x - Goal.x < -Speed*delta && Move.x >= 0)
     {
-         if (CheckRight(this))
-         {
-             Update(cocos2d::Vec2(Speed*delta, 0));
-             if (!CheckRight(this))
-                 Update(cocos2d::Vec2(-Speed*delta, 0));
-             else
-             return;
-         }
-         if (Move.x != Move.y)
-         {
-             if (Move.y > 0 || Goal.y >= Base.y)
-             {
-                 if (CheckUp(this) && Move.y >= 0)
-                 {
-                     Update(cocos2d::Vec2(0, Speed*delta));
-                     if (!CheckUp(this))
-                         Update(cocos2d::Vec2(0, -Speed*delta));
-                     else
-                         return;
-                 }
-             }
-             if (Move.y < 0 || Base.y >= Goal.y)
-             {
-                 if (CheckDown(this) && Move.y <= 0)
-                 {
-                     Update(cocos2d::Vec2(0, -Speed*delta));
-                     if (!CheckDown(this))
-                         Update(cocos2d::Vec2(0, Speed*delta));
-                     else
-                         return;
-                 }
-             }
-             if (Move.y == 0)
-             {
-                 if (CheckUp(this))
-                 {
-                     Update(cocos2d::Vec2(0, Speed*delta));
-                     if (!CheckUp(this))
-                         Update(cocos2d::Vec2(0, -Speed*delta));
-                     else
-                         return;
-                 }
-                 if (CheckDown(this))
-                 {
-                     Update(cocos2d::Vec2(0, -Speed*delta));
-                     if (!CheckDown(this))
-                         Update(cocos2d::Vec2(0, Speed*delta));
-                     else
-                         return;
-                 }
-             }
-         }
+        if (Update(Dir::Right, delta))
+            return;
+        if (Update(Dir::Up, Dir::Down, true, delta))
+            return;
     }
     if (std::abs(Goal.y - pos.y) < Speed * delta)
     {
@@ -271,6 +162,7 @@ void EnemyGeneral::Update(cocos2d::Vec2 next)
 
 void EnemyGeneral::ChangeGoal(const cocos2d::Vec2 pos)
 {
+    Get = false;
     Base = Sprite()->getPosition();
     Goal = pos;
 }
@@ -294,7 +186,7 @@ void EnemyGeneral::ChangeMove(cocos2d::Vec2 Lastpos)
     cocos2d::Vec2 pos = Sprite()->getPosition();
     if (std::abs(pos.x - Lastpos.x) > 2)
     {
-        if (Move.x == 0 || Move.y != 0)
+        if (Move.y != 0)
         {
             Base = pos;
         }
@@ -303,7 +195,7 @@ void EnemyGeneral::ChangeMove(cocos2d::Vec2 Lastpos)
     }
     else if (std::abs(pos.y - Lastpos.y) > 2)
     {
-        if (Move.y == 0 || Move.x != 0)
+        if (Move.x != 0)
         {
             Base = pos;
         }
@@ -314,6 +206,8 @@ void EnemyGeneral::ChangeMove(cocos2d::Vec2 Lastpos)
 
 bool EnemyGeneral::Reached()
 {
+    if (Get)
+        Move = cocos2d::Vec2(0, 0);
     return Get;
 }
 
@@ -324,5 +218,11 @@ int& EnemyGeneral::GetLifes()
 
 bool EnemyGeneral::Kill()
 {
+    if (Timer <= GetTime())
+    {
+        GetTime() -= Timer;
+        Timer = rand() % 2 + 1;
+        return true;
+    }
     return false;
 }

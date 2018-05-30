@@ -12,7 +12,6 @@ class Player
 public:
      Player(const std::string& filenamePicture, const std::vector<std::shared_ptr<Labirint>>& lab);
     ~Player() = default;
-
     void Update(float delta);
     void AddUserAction(cocos2d::EventKeyboard::KeyCode);
     void RemoveUserAction(cocos2d::EventKeyboard::KeyCode);

@@ -68,7 +68,7 @@ bool HelloWorld::init()
     Sc->setAnchorPoint(cocos2d::Vec2(0, 0));
     Sc->setPosition(cocos2d::Vec2(150, 60));
     this->addChild(Sc);
-
+    
     this->scheduleUpdate();
     return true;
 }
@@ -101,9 +101,10 @@ void HelloWorld::update(float delta)
             End();
             return;
         }
-        else 
+        else
+        {
             if (EnemyPatr[i]->Update())
-            Places.push_back(i);
+                Places.push_back(i);
             else
             {
                 for (size_t j = 0; j < Patr.size(); ++j)
@@ -116,6 +117,7 @@ void HelloWorld::update(float delta)
                     }
                 }
             }
+        }
     }
     Delete<Shooting>(EnemyPatr, Places);
     for (size_t j = 0; j < En.size(); ++j)
@@ -169,10 +171,13 @@ void HelloWorld::OnKeyPressed(cocos2d::EventKeyboard::KeyCode key, cocos2d::Even
 {
     if (key == cocos2d::EventKeyboard::KeyCode::KEY_ENTER)
     {
-        GameOver->setVisible(false);
-        Score = 20;
-        Pack = std::make_shared<Player>("packman.png", labirint);
-        this->addChild(Pack->Sprite());
+        if (GameOver->isVisible())
+        {
+            GameOver->setVisible(false);
+            Score = 20;
+            Pack = std::make_shared<Player>("packman.png", labirint);
+            this->addChild(Pack->Sprite());
+        }
     }
     else if (key == cocos2d::EventKeyboard::KeyCode::KEY_SPACE && !GameOver->isVisible())
     {
@@ -188,13 +193,20 @@ void HelloWorld::OnKeyPressed(cocos2d::EventKeyboard::KeyCode key, cocos2d::Even
 
 void HelloWorld::AddEnemies()
 {
-    En.push_back(std::make_shared<EnemyGeneral>("packman.png", labirint, Pack->Sprite()->getPosition()));
+    cocos2d::Vec2 pos = Pack->Sprite()->getPosition();
+    En.push_back(std::make_shared<EnemyGeneral>("packman.png", labirint, pos, cocos2d::Vec2(955, 10)));
     CheckCollision();
-    En.push_back(std::make_shared<Enemy2>("packman.png", labirint, Pack->Sprite()->getPosition()));
+    pos.x += 50;
+    En.push_back(std::make_shared<EnemyGeneral>("packman.png", labirint, pos, cocos2d::Vec2(20, 715)));
+    En.back()->Sprite()->setColor(cocos2d::Color3B::GREEN);
     CheckCollision();
-    En.push_back(std::make_shared<Enemy3>("packman.png", labirint, Pack->Sprite()->getPosition()));
+    pos.y -= 50;
+    En.push_back(std::make_shared<EnemyGeneral>("packman.png", labirint, pos, cocos2d::Vec2(955, 715)));
+    En.back()->Sprite()->setColor(cocos2d::Color3B::GRAY);
     CheckCollision();
-    En.push_back(std::make_shared<Enemy4>("packman.png", labirint, Pack->Sprite()->getPosition()));
+    pos.x -= 100;
+    En.push_back(std::make_shared<EnemyGeneral>("packman.png", labirint, pos, cocos2d::Vec2(20, 10)));
+    En.back()->Sprite()->setColor(cocos2d::Color3B::ORANGE);
     CheckCollision();
 }
 
@@ -245,7 +257,7 @@ template <typename T>
 void HelloWorld::Delete(std::vector<std::shared_ptr<T>>& vec, std::vector<size_t>& pos)
 {
     size_t i = 0;
-    for (size_t j = 0; j < pos.size(); ++j, ++i)
+    for (size_t j = 0; j < pos.size() - i; ++j, ++i)
     {
         this->removeChild(vec[pos[j] - i]->Sprite());
         vec.erase(vec.begin() + pos[j] - i);

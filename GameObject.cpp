@@ -151,8 +151,8 @@ bool GameObject::Collision(cocos2d::Node * first, cocos2d::Node * second)
     float w1 = first->getContentSize().width;
     float h2 = second->getContentSize().height;
     float w2 = second->getContentSize().width;
-    return (((std::abs(x2 - x1) < w2 * s2) || (std::abs(x2 - x1) < w1 * s1))
-        && ((std::abs(y2 - y1) < h2 * s2) || (std::abs(y2 - y1) < h1 * s1)));
+    return ((x2 - x1 < w1 * s1) && (x1 - x2 < w2 * s2)
+        && (y2 - y1 < h1 * s1) && (y1 - y2 < h2 * s2));
 }
 
 bool GameObject::Collision(GameObject * obj)

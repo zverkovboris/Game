@@ -4,9 +4,6 @@
 #include "cocos2d.h"
 #include "GameObject.h"
 #include "Enemy1.h"
-#include "Enemy2.h"
-#include "Enemy3.h"
-#include "Enemy4.h"
 #include "Player.h"
 #include "Labirint.h"
 #include "Shoot.h"
@@ -38,12 +35,12 @@ private:
     std::vector<std::shared_ptr<Labirint>> labirint;
     std::vector<std::shared_ptr<Shooting>> Patr;
     std::vector<std::shared_ptr<Shooting>> EnemyPatr;
-    void OnKeyPressed(cocos2d::EventKeyboard::KeyCode, cocos2d::Event*);
+    void OnKeyPressed(cocos2d::EventKeyboard::KeyCode, cocos2d::Event* event);
     void AddEnemies();
     void End();
     void CheckCollision();
     void AddEn(cocos2d::Sprite * sprite);
-    void OnKeyReleased(cocos2d::EventKeyboard::KeyCode, cocos2d::Event*);
+    void OnKeyReleased(cocos2d::EventKeyboard::KeyCode, cocos2d::Event* event);
     template <typename T>
     void Delete(std::vector<std::shared_ptr<T>>& vec, std::vector<size_t>& pos);
 };
